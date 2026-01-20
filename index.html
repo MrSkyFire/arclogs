@@ -47,35 +47,3 @@ function loadLogs() {
         if (lines[0].startsWith('@')) user = lines.shift().substring(1);
         if (lines[0] && lines[0].startsWith('[DATE:') && lines[0].endsWith(']')) date = lines.shift().slice(6,-1).trim();
         const div = document.createElement('div'); div.className='log';
-        if(user){const u=document.createElement('div'); u.className='user'; u.textContent=user; div.appendChild(u);}
-        if(date){const d=document.createElement('div'); d.className='date'; d.textContent='Submitted: '+date; div.appendChild(d);}
-        div.appendChild(document.createTextNode(lines.join('\n')));
-        container.appendChild(div);
-      });
-    })
-    .catch(()=>document.getElementById('logs').textContent='Error loading logs.');
-}
-loadLogs();
-
-// Handle submission
-document.getElementById('submitLog').addEventListener('submit', function(e){
-  e.preventDefault();
-  const username=document.getElementById('username').value.trim();
-  const date=document.getElementById('date').value;
-  const text=document.getElementById('logtext').value.trim();
-  if(!text) return alert("Log text cannot be empty.");
-  fetch('/submit', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({username,date,text})
-  })
-  .then(res=>res.json())
-  .then(res=>{
-    if(res.success){loadLogs(); document.getElementById('submitLog').reset();}
-    else alert('Submission failed: '+res.error);
-  })
-  .catch(err=>alert('Submission failed: '+err));
-});
-</script>
-</body>
-</html>
