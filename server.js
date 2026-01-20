@@ -14,7 +14,9 @@ app.use(express.static(__dirname));
 
 // GET logs
 app.get('/logs.txt', (req, res) => {
-  res.sendFile(LOG_FILE);
+  res.sendFile(LOG_FILE, err => {
+    if (err) res.status(500).send('Could not read logs.');
+  });
 });
 
 // POST submission
@@ -32,7 +34,7 @@ app.post('/submit', (req, res) => {
       console.error(err);
       return res.status(500).json({ error: "Failed to write log." });
     }
-    res.json({ success: true, entry });
+    return res.status(200).json({ success: true, entry });
   });
 });
 
